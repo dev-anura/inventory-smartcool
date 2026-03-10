@@ -170,7 +170,10 @@ footer {
             <i class="fas fa-upload"></i> RESTORE
         </label>
         <input type="file" id="restoreFile" accept=".json" onchange="restoreSystem()" style="display:none;">
-
+<div class="nav-item" onclick="window.logout()" style="color: #e74c3c;">
+    <i class="fas fa-sign-out-alt"></i>
+    <span>Logout</span>
+</div>
         
         </div>
     </div>
@@ -1879,6 +1882,16 @@ window.restoreSystem = async () => {
     };
     reader.readAsText(file);
 };
+
+window.logout = () => {
+    if(confirm("Logout වෙන්නද ඕනේ?")) {
+        sessionStorage.clear();
+        location.reload();
+    }
+};
+
+
+	
 </script>
 <footer style="margin-top: 40px; padding: 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
     <div style="max-width: 600px; margin: 0 auto;">
@@ -1900,3 +1913,4 @@ window.restoreSystem = async () => {
 </footer>
 </body>
 </html>
+
