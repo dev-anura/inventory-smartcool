@@ -1,0 +1,1902 @@
+
+
+
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Cool Solutions - 2026</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #1e293b; --accent: #3498db; --success: #27ae60; --dark: #0f172a; --danger: #e74c3c; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f1f5f9; padding-bottom: 50px; }
+        .hidden { display: none !important; }
+        
+        /* Navbar & Menu */
+        .navbar { background: var(--primary); color: white; position: sticky; top: 0; z-index: 1000; }
+        .nav-top { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: var(--dark); }
+        .nav-menu { display: flex; overflow-x: auto; background: var(--primary); scrollbar-width: none; }
+        .nav-item { padding: 15px 20px; color: #94a3b8; cursor: pointer; font-size: 12px; font-weight: bold; white-space: nowrap; }
+        .nav-item.active { color: white; border-bottom: 3px solid var(--accent); }
+
+        /* UI Elements */
+        .container { padding: 15px; max-width: 800px; margin: auto; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
+        .btn { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: white; width: 100%; transition: 0.2s; }
+        
+        /* Service List UI */
+        .s-item { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 6px; border-left: 5px solid var(--accent); font-size: 13px; }
+        
+        #login-overlay { position: fixed; inset: 0; background: var(--dark); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+		
+		
+		.job-card {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    border-left: 6px solid var(--accent);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.job-card h4 { margin: 0 0 5px 0; color: var(--primary); }
+.job-card p { margin: 3px 0; font-size: 13px; color: #64748b; }
+.job-status { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: #e0f2fe; color: #0369a1; font-weight: bold; }
+
+
+
+.hidden { display: none !important; }
+
+@media print {
+    .navbar, .no-print, .nav-menu, .nav-top, .btn {
+        display: none !important;
+    }
+    body { background: white; }
+    .invoice-container {
+        border: none !important;
+        box-shadow: none !important;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+footer {
+    margin-top: auto;
+}
+.nav-menu {
+    display: flex;
+    flex-wrap: wrap; /* බටන් වැඩි වුණොත් යට පේළියට යනවා */
+    gap: 4px; /* බටන් අතර පරතරය ඉතාම අඩු කළා */
+    background: #1e293b;
+    padding: 5px;
+    align-items: center;
+}
+
+.nav-item {
+    padding: 6px 10px; /* බටන් එක ඇතුළේ පරතරය */
+    font-size: 12px;
+    border-radius: 4px;
+    white-space: nowrap; /* අකුරු කඩෙන්නේ නැතුව එක පේළියට තියෙන්න */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Mobile Screen එකේදී scroll වෙන්න ඕන නම් මේක දාන්න */
+@media (max-width: 768px) {
+    .nav-menu {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+}
+		
+    </style>
+</head>
+
+<div style="background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;">
+    <span style="font-weight: bold; font-size: 18px;">SMART COOL SOLUTIONS</span>
+    
+    <div id="branch-badge" style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 12px; border: 1px solid rgba(255,255,255,0.4);">
+        <i class="fas fa-map-marker-alt"></i> <span id="display-branch-name">Loading...</span>
+    </div>
+</div>
+
+
+
+
+
+<div id="job-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:10000; padding:20px; align-items:center; justify-content:center;">
+    <div class="card" style="width:100%; max-width:500px; max-height:90vh; overflow-y:auto; position:relative; margin:auto; margin-top: 5vh;">
+        <button onclick="closeJobModal()" style="position:absolute; right:15px; top:15px; border:none; background:#eee; border-radius:50%; width:30px; height:30px; cursor:pointer; font-weight:bold;">&times;</button>
+        
+        <h3 id="modal-job-id" style="color:var(--accent); margin-top:0;">JOB ID</h3>
+        <hr>
+        
+        <div id="modal-content">
+            </div>
+
+        <div style="margin-top:20px; display:flex; gap:10px;">
+            <button class="btn" style="background:var(--success); flex:1;" onclick="window.print()"><i class="fas fa-print"></i> PRINT</button>
+            <button class="btn" style="background:var(--danger); flex:1;" onclick="closeJobModal()">CLOSE</button>
+        </div>
+    </div>
+</div>
+
+<div id="sync-status-bar" style="background: #1e293b; color: #94a3b8; font-size: 11px; padding: 5px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
+    <span><i class="fas fa-cloud"></i> SERVICE CLOUD v2.0</span>
+    <span id="sync-label"><i class="fas fa-check-circle" style="color:#22c55e;"></i> CLOUD SYNCED</span>
+</div>
+
+<body onload="checkAuth()">
+
+<div id="login-overlay">
+    <div class="card" style="width:300px; text-align:center;">
+        <h2 style="color:var(--primary)">SMART COOL SOLUTIONS</h2>
+        <input type="password" id="pass-field" placeholder="Password">
+        <button onclick="loginProcess()" class="btn" style="background:var(--accent)">LOGIN</button>
+    </div>
+</div>
+
+<div id="main-app" class="hidden">
+    <div class="nav-menu">
+        <div class="nav-item active" onclick="changeTab('home', this)"><i class="fas fa-home"></i> HOME</div>
+        <div class="nav-item" onclick="changeTab('new-job', this)"><i class="fas fa-plus-circle"></i> NEW JOB</div>
+        <div class="nav-item" onclick="changeTab('add-stock', this)"><i class="fas fa-boxes"></i> ADD STOCK</div>
+        <div class="nav-item" onclick="changeTab('view-stock', this); renderStockTable();"><i class="fas fa-list-ul"></i> VIEW STOCK</div>
+        <div class="nav-item" onclick="changeTab('stock-out', this); prepareMIN();"><i class="fas fa-file-export"></i> STOCK OUT</div>
+        <div class="nav-item" onclick="changeTab('srn-module', this); prepareSRN();"><i class="fas fa-undo"></i> SRN</div>
+        <div class="nav-item" onclick="changeTab('expenses-module', this)"><i class="fas fa-wallet"></i> EXPENSES</div>
+        <div class="nav-item" onclick="changeTab('salary-module', this)"><i class="fas fa-users"></i> SALARY</div>
+        <div class="nav-item" onclick="changeTab('finance-module', this)"><i class="fas fa-chart-line"></i> FINANCE</div>
+        <div class="nav-item" onclick="changeTab('invoice-module', this)"><i class="fas fa-file-invoice"></i> INVOICE</div>
+        
+        <div class="nav-item" onclick="openAdminPanel()">
+            <i class="fas fa-user-shield"></i> ADMIN
+        </div>
+
+        <div class="nav-item" onclick="backupSystem()" style="background:#0f172a; color:white;">
+            <i class="fas fa-download"></i> BACKUP
+        </div>
+
+        <label for="restoreFile" class="nav-item" style="background:#475569; color:white; cursor:pointer; margin:0;">
+            <i class="fas fa-upload"></i> RESTORE
+        </label>
+        <input type="file" id="restoreFile" accept=".json" onchange="restoreSystem()" style="display:none;">
+
+        
+        </div>
+    </div>
+</div>
+
+
+
+
+        <div id="tab-new-job" class="module hidden">
+            <div class="card">
+			<div class="nav-item" onclick="changeTab('add-stock', this)"><i class="fas fa-boxes"></i> ADD STOCK</div>
+                <h3><i class="fas fa-plus-circle"></i> NEW JOB REGISTRATION</h3>
+                <input type="text" id="j-id" placeholder="Job ID / Reference">
+                <input type="text" id="j-phone" placeholder="Customer Phone">
+                <input type="text" id="j-address" placeholder="Service Address">
+				
+				<div class="form-group" style="margin-bottom: 15px;">
+    <label><i class="fas fa-edit"></i> Remarks / Special Notes</label>
+    <textarea id="j-remarks" placeholder="ලෙඩේ ගැන හෝ වෙනත් විශේෂ කරුණු මෙතන ලියන්න..." 
+              style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; height: 60px;"></textarea>
+</div>
+				
+				
+                
+
+                <div style="background: #f0f7ff; padding: 15px; border-radius: 10px; border: 1px dashed var(--accent); margin-top: 10px;">
+                    <label><b>ADD SERVICES & MATERIALS</b></label>
+                    <div style="display:flex; gap:5px; margin-top:5px;">
+                        <select id="s-selector" onchange="updatePriceField()" style="flex:2">
+                            <option value="" data-price="0">-- Select Service --</option>
+                            <optgroup label="AC Installation">
+                                <option value="9000 BTU AC Installation" data-price="8500">9000 BTU AC Installation</option>
+                                <option value="12000 BTU AC Installation" data-price="9500">12000 BTU AC Installation</option>
+                                <option value="18000 BTU AC Installation" data-price="12500">18000 BTU AC Installation</option>
+                                <option value="24000 BTU AC Installation" data-price="15500">24000 BTU AC Installation</option>
+                                <option value="36000 BTU AC Installation" data-price="18000">36000 BTU AC Installation</option>
+                                <option value="48000 BTU AC Installation" data-price="22000">48000 BTU AC Installation</option>
+                                <option value="60000 BTU AC Installation" data-price="25000">60000 BTU AC Installation</option>
+                            </optgroup>
+                            <optgroup label="Extra Piping">
+                                <option value="9000 BTU AC Extra Piping" data-price="1200">9000 BTU AC Extra Piping</option>
+                                <option value="12000 BTU AC Extra Piping" data-price="1500">12000 BTU AC Extra Piping</option>
+                                <option value="18000 BTU AC Extra Piping" data-price="1800">18000 BTU AC Extra Piping</option>
+                                <option value="24000 BTU AC Extra Piping" data-price="2000">24000 BTU AC Extra Piping</option>
+                                <option value="36000 BTU AC Extra Piping" data-price="2500">36000 BTU AC Extra Piping</option>
+                                <option value="48000 BTU AC Extra Piping" data-price="3000">48000 BTU AC Extra Piping</option>
+                                <option value="60000 BTU AC Extra Piping" data-price="3500">60000 BTU AC Extra Piping</option>
+                            </optgroup>
+                            <optgroup label="Casing Installation">
+                                <option value="2x2 Casing Installation" data-price="15000">2x2 Casing Installation</option>
+                                <option value="2x3 Casing Installation" data-price="18500">2x3 Casing Installation</option>
+                                <option value="2x4 Casing Installation" data-price="22500">2x4 Casing Installation</option>
+                            </optgroup>
+                            <optgroup label="Insulation">
+                                <option value="Drain Insulation" data-price="5500">Drain Insulation</option>
+                                <option value="Double Insulation" data-price="7500">Double Insulation</option>
+                            </optgroup>
+                            <optgroup label="Other Parts & Materials">
+                                <option value="Other Parts / Materials" data-price="0">Other Parts / Materials</option>
+                            </optgroup>
+                        </select>
+                        <input type="number" id="s-qty" value="1" style="flex:0.4; text-align:center;">
+                        <input type="number" id="s-price" placeholder="Price" style="flex:0.8">
+                        <button onclick="addServiceToList()" class="btn" style="background:var(--accent); width:auto; padding:0 15px;">ADD</button>
+                    </div>
+                    <input type="text" id="other-desc" class="hidden" placeholder="Enter Material Name...">
+                    <div id="s-list-display" style="margin-top:10px;"></div>
+                </div>
+
+                <label style="display:block; margin-top:15px;">Total Charge (Rs.)</label>
+                <input type="number" id="j-total" readonly style="background:#eee; font-size:20px; color:var(--danger); font-weight:bold;">
+
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn" style="background:var(--success); flex:2;" onclick="saveJobToCloud()">SAVE JOB</button>
+                    <button class="btn" style="background:#94a3b8; flex:1;" onclick="location.reload()">CANCEL</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="tab-add-stock" class="module hidden">
+    <div class="card">
+        <h3><i class="fas fa-plus-square"></i> STOCK MANAGEMENT</h3>
+        
+        <label>Item Selection</label>
+        <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+            <select id="stk-select-item" onchange="window.loadStockDetails()" style="flex: 2; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                <option value="">-- Select Existing Item to Update --</option>
+            </select>
+            <button onclick="window.refreshStockList()" style="flex: 0.5; background: #64748b; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-sync"></i>
+            </button>
+        </div>
+
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+
+        <label>Item Name / Code</label>
+        <input type="text" id="stk-item" placeholder="Ex: 9000BTU Indoor PCB">
+        
+        <label>Description</label>
+        <input type="text" id="stk-desc" placeholder="Details about the item">
+        
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Quantity</label>
+                <input type="number" id="stk-qty" placeholder="0">
+            </div>
+            <div style="flex: 1;">
+                <label>Unit Price (Rs.)</label>
+                <input type="number" id="stk-price" placeholder="0.00">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="saveStockToCloud()" class="btn" style="flex: 1; background: var(--success);">
+                <i class="fas fa-save"></i> SAVE NEW
+            </button>
+            <button onclick="updateStockInCloud()" class="btn" style="flex: 1; background: #f59e0b;">
+                <i class="fas fa-edit"></i> UPDATE STOCK
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="tab-view-stock" class="module hidden">
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin:0;"><i class="fas fa-boxes"></i> <span id="stk-br-title">Branch</span> Inventory</h3>
+            <button onclick="renderStockTable()" class="btn" style="width: auto; padding: 5px 15px; background: var(--primary);"><i class="fas fa-sync"></i></button>
+        </div>
+        
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <thead>
+                    <tr style="background: var(--dark); color: white; text-align: left;">
+                        <th style="padding: 10px;">Item</th>
+                        <th style="padding: 10px;">Desc</th>
+                        <th style="padding: 10px; text-align: center;">Qty</th>
+                        <th style="padding: 10px; text-align: right;">Price</th>
+                    </tr>
+                </thead>
+                <tbody id="stk-table-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div id="tab-stock-out" class="module hidden">
+    <div class="card">
+        <h3><i class="fas fa-dolly"></i> STOCK OUT (MIN)</h3>
+        
+        <label>Select Job ID</label>
+        <select id="min-job-id">
+            <option value="">-- Select Job --</option>
+        </select>
+
+        <label>Select Item from Stock</label>
+        <select id="min-item-name">
+            <option value="">-- Select Item --</option>
+        </select>
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Issue Qty</label>
+                <input type="number" id="min-qty" placeholder="0">
+            </div>
+            <div style="flex: 1;">
+                <label>Technician Name</label>
+                <input type="text" id="min-tech" placeholder="Name">
+            </div>
+        </div>
+
+        <button onclick="processMIN()" class="btn" style="background:var(--danger); margin-top: 20px;">
+            <i class="fas fa-check-circle"></i> CONFIRM STOCK OUT
+        </button>
+    </div>
+</div>
+
+
+
+<div id="tab-srn-module" class="module hidden">
+    <div class="card">
+        <h3><i class="fas fa-undo"></i> STOCK RETURN (SRN)</h3>
+        
+        <label>Select Job ID</label>
+        <select id="srn-job-id" onchange="loadJobItemsForSRN()">
+            <option value="">-- Select Job --</option>
+        </select>
+
+        <label>Select Item to Return</label>
+        <select id="srn-item-name">
+            <option value="">-- Select Item --</option>
+        </select>
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Return Qty</label>
+                <input type="number" id="srn-qty" placeholder="0">
+            </div>
+            <div style="flex: 1;">
+                <label>Reason</label>
+                <input type="text" id="srn-reason" placeholder="Excess/Wrong item">
+            </div>
+        </div>
+
+        <button onclick="processSRN()" class="btn" style="background:var(--accent); margin-top: 20px;">
+            <i class="fas fa-sync"></i> CONFIRM RETURN TO STOCK
+        </button>
+    </div>
+</div>
+
+
+<div id="tab-expenses-module" class="module hidden">
+    <div class="card">
+        <h3><i class="fas fa-file-invoice-dollar"></i> ADD EXPENSE</h3>
+        
+        <label>Expense Category</label>
+        <select id="exp-category">
+            <option value="Rent">Rent</option>
+            <option value="Fuel">Fuel</option>
+            <option value="Transport">Transport</option>
+            <option value="Salaries">Salaries (Other)</option>
+            <option value="Others">Others</option>
+        </select>
+
+        <label>Amount (Rs.)</label>
+        <input type="number" id="exp-amount" placeholder="0.00">
+
+        <label>Description</label>
+        <input type="text" id="exp-note" placeholder="Note here...">
+
+        <button onclick="saveExpense()" class="btn" style="background:var(--danger); margin-top: 20px;">
+            <i class="fas fa-save"></i> SAVE EXPENSE
+        </button>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+        <h4><i class="fas fa-history"></i> BRANCH EXPENSE HISTORY</h4>
+        <div id="branch-exp-list">
+            </div>
+    </div>
+</div>
+
+
+<div id="tab-salary-module" class="module hidden">
+    <div class="card">
+        <h3><i class="fas fa-money-check-alt"></i> EMPLOYEE PAYROLL</h3>
+        
+        <label>Employee Name</label>
+        <input type="text" id="sal-name" placeholder="Name">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+                <label>Basic Salary</label>
+                <input type="number" id="sal-basic" oninput="calculateNetSalary()" value="0">
+            </div>
+            <div>
+                <label>O/T Amount</label>
+                <input type="number" id="sal-ot" oninput="calculateNetSalary()" value="0">
+            </div>
+            <div>
+                <label>Incentives</label>
+                <input type="number" id="sal-inc" oninput="calculateNetSalary()" value="0">
+            </div>
+            <div>
+                <label>Advance (-)</label>
+                <input type="number" id="sal-adv" oninput="calculateNetSalary()" value="0" style="color:red;">
+            </div>
+        </div>
+
+        <div style="margin-top: 15px; padding: 10px; background: #f1f5f9; border-radius: 5px; text-align: center;">
+            <span style="font-size: 14px; color: #64748b;">Net Salary To Pay:</span><br>
+            <b id="net-salary-display" style="font-size: 20px; color: var(--success);">Rs. 0.00</b>
+        </div>
+
+        <button onclick="saveSalary()" class="btn" style="background:var(--primary); margin-top: 15px;">
+            <i class="fas fa-save"></i> SAVE SALARY RECORD
+        </button>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+        <h4><i class="fas fa-history"></i> SALARY HISTORY</h4>
+        <div id="branch-sal-list"></div>
+    </div>
+</div>
+
+<div id="tab-finance-module" class="module hidden">
+    <div class="card">
+        <h3><i class="fas fa-file-invoice-dollar"></i> FINANCE REPORT</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div>
+                <label>From Date</label>
+                <input type="date" id="fin-from-date">
+            </div>
+            <div>
+                <label>To Date</label>
+                <input type="date" id="fin-to-date">
+            </div>
+        </div>
+        
+        <button onclick="generateFinanceReport()" class="btn" style="background:var(--primary); width: 100%;">
+            <i class="fas fa-sync"></i> GENERATE REPORT
+        </button>
+    </div>
+
+    <div id="report-summary" class="hidden">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+            <div class="card" style="background: #ecfdf5; border-left: 5px solid #10b981; padding: 15px;">
+                <small style="color: #065f46;">TOTAL INCOME</small><br>
+                <b id="total-income-disp" style="font-size: 18px; color: #047857;">Rs. 0.00</b>
+            </div>
+            <div class="card" style="background: #fef2f2; border-left: 5px solid #ef4444; padding: 15px;">
+                <small style="color: #991b1b;">TOTAL EXPENSES</small><br>
+                <b id="total-exp-disp" style="font-size: 18px; color: #b91c1c;">Rs. 0.00</b>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 10px; background: #eff6ff; border-left: 5px solid #3b82f6;">
+            <small style="color: #1e40af;">NET PROFIT / LOSS</small><br>
+            <h2 id="net-profit-disp" style="margin: 5px 0; color: #1d4ed8;">Rs. 0.00</h2>
+        </div>
+
+        <div class="card" style="margin-top: 15px;">
+            <h4><i class="fas fa-list-ul"></i> BREAKDOWN</h4>
+            <div id="finance-breakdown" style="font-size: 13px;"></div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="tab-invoice-module" class="module hidden">
+    <div class="card no-print">
+        <h3><i class="fas fa-print"></i> GENERATE INVOICE</h3>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="inv-search-id" placeholder="Enter Job ID (e.g. 1001)">
+            <button onclick="generateInvoice()" class="btn" style="width: auto; background: var(--primary);">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="printable-invoice" class="invoice-container card">
+        <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px;">
+            <h2 style="margin:0;">SMART COOL SOLUTIONS</h2>
+            <p style="margin:2px 0; font-size:12px;">525/35, Stage 2, D. S. Senanayake Rd, Anuradhapura</p>
+            <p style="margin:2px 0; font-size:13px; font-weight:bold;">Hotline: 070 5222 888</p>
+            <h3 style="margin: 10px 0 0 0; text-decoration: underline;">SERVICE INVOICE</h3>
+        </div>
+
+        <div id="invoice-header-details" style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 20px;">
+            </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+                <tr style="background: #f1f5f9; border-bottom: 1px solid #333;">
+                    <th style="text-align: left; padding: 8px;">Description</th>
+                    <th style="text-align: center; padding: 8px;">Qty</th>
+                    <th style="text-align: right; padding: 8px;">Amount</th>
+                </tr>
+            </thead>
+            <tbody id="invoice-body">
+                </tbody>
+        </table>
+
+        <div id="invoice-footer" style="text-align: right; border-top: 1px solid #333; padding-top: 10px;">
+            </div>
+
+        <div style="margin-top: 40px; display: flex; justify-content: space-between; font-size: 12px;">
+            <div style="text-align: center; width: 150px; border-top: 1px solid #333;">Customer Signature</div>
+            <div style="text-align: center; width: 150px; border-top: 1px solid #333;">Authorized Signature</div>
+        </div>
+    </div>
+
+    <button onclick="window.print()" class="btn no-print" style="background: #1e293b; margin-top: 20px;">
+        <i class="fas fa-print"></i> PRINT INVOICE
+    </button>
+</div>
+
+
+<div id="tab-admin-panel" class="module hidden">
+    <div id="admin-lock-screen" class="card" style="text-align: center; padding: 40px;">
+        <i class="fas fa-lock" style="font-size: 40px; color: var(--danger);"></i>
+        <h3>Admin Access</h3>
+        <input type="password" id="admin-pass-input" placeholder="Password: admin password" style="text-align: center; margin-top: 15px;">
+        <button onclick="verifyAdmin()" class="btn" style="background: var(--danger); margin-top: 10px;">UNLOCK</button>
+    </div>
+
+    <div id="admin-content" class="hidden">
+        <div class="card" style="background: #1e293b; color: white; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin:0;">ADMIN CONTROL</h3>
+            <select id="admin-branch-filter" onchange="loadAdminData(currentType)" style="padding: 5px; border-radius: 5px; width: 150px;">
+                <option value="All">All Branches</option>
+                <option value="Anuradhapura">Anuradhapura</option>
+                <option value="Branch 2">Branch 2</option>
+            </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin: 15px 0;">
+            <button onclick="loadAdminData('jobs')" class="btn btn-sm">JOBS</button>
+            <button onclick="loadAdminData('salaries')" class="btn btn-sm">SALARY</button>
+            <button onclick="loadAdminData('expenses')" class="btn btn-sm">EXPENSES</button>
+            <button onclick="loadAdminData('stock')" class="btn btn-sm">STOCK</button>
+        </div>
+
+        <div id="admin-list-container"></div>
+    </div>
+</div>
+
+<div id="edit-modal" class="modal hidden no-print" style="background: rgba(0,0,0,0.8); position:fixed; top:0; left:0; width:100%; height:100%; z-index:999; display:flex; align-items:center; justify-content:center;">
+    <div class="card" style="width: 90%; max-width: 400px; background: white;">
+        <h3 id="edit-title">Edit Record</h3>
+        <div id="edit-form-inputs"></div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="saveAdminEdit()" class="btn" style="background: var(--primary);">SAVE CHANGES</button>
+            <button onclick="closeEditModal()" class="btn" style="background: gray;">CANCEL</button>
+        </div>
+    </div>
+</div>
+
+<hr style="margin: 25px 0; border: 0; border-top: 2px dashed #eee;">
+
+<div style="padding: 15px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+    <h3 style="font-size: 14px; margin-bottom: 10px; color: var(--primary);"><i class="fas fa-search"></i> Quick Job Search</h3>
+    
+    <div style="position: relative; margin-bottom: 15px;">
+        <input type="text" id="global-search-input" oninput="window.globalSearch()" 
+               placeholder="Search Job ID / Phone / Type..." 
+               style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none;">
+    </div>
+
+    <div id="global-results-list"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+// --- අලුත් Firebase Config එක ---
+const firebaseConfig = {
+    apiKey: "AIzaSyByV9U1vB6_Lp3-zWk6oD-gHq8N9_YOUR_KEY", // Project settings වල තියෙන API Key එක මෙතනට දාන්න
+    authDomain: "inventory-erp-2026.firebaseapp.com",
+    databaseURL: "https://inventory-erp-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "inventory-erp-2026",
+    storageBucket: "inventory-erp-2026.firebasestorage.app",
+    messagingSenderId: "979554991183",
+    appId: "1:979554991183:web:ce7f7e9f3b5c4d2a1" // App ID එක මෙතනට දාන්න
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.data = { jobs: [], salaries: [] }; // Salaries වලටත් ඉඩ තියාගත්තා
+let tempServices = [];
+
+// --- Sync to Cloud ---
+window.sync = () => {
+    set(ref(db, 'smart_cool_main'), window.data)
+    .then(() => console.log("Data Synced Successfully!"))
+    .catch((error) => console.error("Sync Error:", error));
+};
+
+// --- Load from Cloud (Refresh එකේදී දත්ත බේරගන්න තැන) ---
+onValue(ref(db, 'smart_cool_main'), (snap) => {
+    const cloudData = snap.val();
+    if(cloudData) {
+        window.data = cloudData;
+        console.log("Cloud Data Loaded:", window.data);
+        
+        // UI එක Update කරන function එක මෙතන call කරන්න (උදා: renderJobs())
+        if (typeof renderJobs === "function") renderJobs();
+        if (typeof renderSalaries === "function") renderSalaries();
+    }
+});
+
+// Helper functions
+window.updatePriceField = () => {
+    const sel = document.getElementById('s-selector');
+    if(!sel) return;
+    
+    const price = sel.options[sel.selectedIndex].getAttribute('data-price');
+    document.getElementById('s-price').value = price;
+    
+    const otherDesc = document.getElementById('other-desc');
+    if(sel.value === "Other Parts / Materials") {
+        otherDesc.classList.remove('hidden');
+    } else {
+        otherDesc.classList.add('hidden');
+    }
+};
+
+
+
+window.addServiceToList = () => {
+    const sel = document.getElementById('s-selector');
+    let name = sel.value;
+    const qty = parseFloat(document.getElementById('s-qty').value) || 1;
+    const price = parseFloat(document.getElementById('s-price').value) || 0;
+    const otherName = document.getElementById('other-desc').value;
+
+    if(!name) return alert("සේවාවක් තෝරන්න!");
+    if(name === "Other Parts / Materials") name = otherName ? "Other: " + otherName : "Other Material";
+
+    // Unit Price එකත් එක්කම Data එක push කරනවා
+    tempServices.push({ name, qty, price, sub: qty * price });
+    
+    // UI එක Render කරන කොටස (Unit Price එක පෙන්වන විදිහට)
+    const container = document.getElementById('s-list-display');
+    container.innerHTML = ""; 
+    let total = 0;
+
+    tempServices.forEach((s, i) => {
+        total += s.sub;
+        container.innerHTML += `
+            <div class="s-item">
+                <div style="flex:2;">
+                    <b>${s.name}</b><br>
+                    <small style="color:#7f8c8d;">Unit Price: Rs. ${s.price.toLocaleString()} x ${s.qty}</small>
+                </div>
+                <div style="flex:1; text-align:right;">
+                    <b style="color:var(--primary);">Rs. ${s.sub.toLocaleString()}</b>
+                    <i class="fas fa-times-circle" onclick="tempServices.splice(${i},1); addServiceToList();" style="color:var(--danger); cursor:pointer; margin-left:10px;"></i>
+                </div>
+            </div>`;
+    });
+    
+    document.getElementById('j-total').value = total;
+
+    // Reset inputs
+    document.getElementById('s-qty').value = 1;
+    document.getElementById('other-desc').value = "";
+};
+
+
+
+  window.saveJobToCloud = () => {
+    // Input values ලබා ගැනීම
+    const id = document.getElementById('j-id').value;
+    const phone = document.getElementById('j-phone').value;
+    const addr = document.getElementById('j-address').value;
+    const totalAmt = parseFloat(document.getElementById('j-total').value);
+    
+    // Remarks සහ Job Type (අපි කලින් හදපු ID එකට අනුව)
+    const remark = document.getElementById('j-remarks') ? document.getElementById('j-remarks').value : "";
+    const type = document.getElementById('job-type-manual') ? document.getElementById('job-type-manual').value : "General";
+
+    // Validate කිරීම
+    if(!id) return alert("කරුණාකර Job ID එක ඇතුළත් කරන්න!");
+    if(tempServices.length === 0) return alert("අවම වශයෙන් එක් සේවාවක්වත් (Service) ඇතුළත් කරන්න!");
+
+    const newJob = {
+        id: id,
+        phone: phone,
+        addr: addr,
+        type: type,      // Job Type එක මෙතනට වැටෙනවා
+        rem: remark,    // Remark එක මෙතනට වැටෙනවා
+        items: [...tempServices], // Array එක copy කරලා දානවා (වැඩි ආරක්ෂාවට)
+        amt: totalAmt,
+        br: sessionStorage.getItem('sc_br'),
+        status: 'Pending', // පටන් ගනිද්දීම status එක pending විදිහට දානවා
+        date: new Date().toLocaleDateString()
+    };
+
+    // Firebase දත්ත වලට එකතු කිරීම
+    if(!window.data.jobs) window.data.jobs = [];
+    window.data.jobs.push(newJob);
+    
+    // Cloud එකට sync කිරීම
+    window.sync();
+    
+    alert("Job එක සාර්ථකව Cloud එකට සේව් කළා! ✅");
+    location.reload(); // Page එක refresh කරනවා
+};
+
+    // Navigation
+    window.changeTab = (id, el) => {
+        document.querySelectorAll('.module').forEach(m => m.classList.add('hidden'));
+        document.getElementById('tab-' + id).classList.remove('hidden');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        if(el) el.classList.add('active');
+		
+		
+		if (id === 'finance-module') {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fin-from-date').value = today;
+    document.getElementById('fin-to-date').value = today;
+}
+    };
+</script>
+
+<script>
+    // Login & Auth
+    function loginProcess() {
+        const pass = document.getElementById('pass-field').value;
+        let br = "";
+        if(pass === "admin5287") br = "Admin";
+        else if(pass === "apr123") br = "Anuradhapura";
+        else if(pass === "neg123") br = "Negombo";
+        else return alert("Wrong Password!");
+
+        sessionStorage.setItem('sc_login', 'true');
+        sessionStorage.setItem('sc_br', br);
+        location.reload();
+    }
+
+    function checkAuth() {
+    const branch = sessionStorage.getItem('sc_br');
+    if(sessionStorage.getItem('sc_login') === 'true' && branch) {
+        // ලොගින් ඕවර්ලේ එක හංගනවා
+        if(document.getElementById('login-overlay')) {
+            document.getElementById('login-overlay').classList.add('hidden');
+        }
+        // ඇප් එක පෙන්වනවා
+        if(document.getElementById('main-app')) {
+            document.getElementById('main-app').classList.remove('hidden');
+        }
+        
+        // --- මෙන්න මේ පේළිය අනිවාර්යයෙන්ම දාන්න ---
+        // උඩම තියෙන Badge එකට බ්‍රාන්ච් එකේ නම දානවා
+        document.getElementById('display-branch-name').innerText = branch.toUpperCase();
+    }
+}
+
+// Page එක load වෙද්දීම මේක රන් වෙන්න ඕනේ
+window.onload = checkAuth;
+
+    function logout() { sessionStorage.clear(); location.reload(); }
+	
+	
+	window.saveStockToCloud = () => {
+    const item = document.getElementById('stk-item').value;
+    const desc = document.getElementById('stk-desc').value;
+    const qty = parseFloat(document.getElementById('stk-qty').value) || 0;
+    const price = parseFloat(document.getElementById('stk-price').value) || 0;
+    const branch = sessionStorage.getItem('sc_br');
+
+    if(!item || qty <= 0) return alert("කරුණාකර නම සහ ප්‍රමාණය ඇතුළත් කරන්න!");
+
+    const newStockEntry = {
+        item,
+        desc,
+        qty,
+        price,
+        totalValue: qty * price,
+        br: branch, // ලොග් වී සිටින බ්‍රාන්ච් එක මෙතනට සේව් වෙනවා
+        date: new Date().toLocaleDateString()
+    };
+
+    if(!window.data.stock) window.data.stock = [];
+    
+    window.data.stock.push(newStockEntry);
+    
+    window.sync(); // Cloud එකට සේව් කරනවා
+    
+    alert(branch + " Stock එකට අයිතමය සාර්ථකව ඇතුළත් කළා!");
+    
+    // Form එක Reset කිරීම
+    document.getElementById('stk-item').value = "";
+    document.getElementById('stk-desc').value = "";
+    document.getElementById('stk-qty').value = "";
+    document.getElementById('stk-price').value = "";
+};
+	
+	
+	window.renderStockTable = () => {
+    const branch = sessionStorage.getItem('sc_br');
+    const tableBody = document.getElementById('stk-table-body');
+    document.getElementById('stk-br-title').innerText = branch;
+    
+    tableBody.innerHTML = "";
+
+    if (!window.data.stock || window.data.stock.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='4' style='text-align:center; padding:20px;'>No stock data found.</td></tr>";
+        return;
+    }
+
+    // බ්‍රාන්ච් එක අනුව Filter කිරීම
+    // Admin ලොග් වුනොත් ඔක්කොම පේනවා, නැත්තම් තමන්ගේ බ්‍රාන්ච් එකේ ඒව විතරයි
+    const filteredStock = window.data.stock.filter(s => branch === "Admin" || s.br === branch);
+
+    filteredStock.forEach(s => {
+        tableBody.innerHTML += `
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px;"><b>${s.item}</b></td>
+                <td style="padding: 10px; color: #666;">${s.desc || '-'}</td>
+                <td style="padding: 10px; text-align: center;">
+                    <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-weight: bold;">${s.qty}</span>
+                </td>
+                <td style="padding: 10px; text-align: right;">${parseFloat(s.price).toLocaleString()}</td>
+            </tr>
+        `;
+    });
+};
+	
+	
+	window.prepareMIN = () => {
+    const branch = sessionStorage.getItem('sc_br');
+    const jobSelect = document.getElementById('min-job-id');
+    const itemSelect = document.getElementById('min-item-name');
+
+    jobSelect.innerHTML = '<option value="">-- Select Job --</option>';
+    itemSelect.innerHTML = '<option value="">-- Select Item --</option>';
+
+    // Load Jobs (Branch එකට අදාළ ඒව විතරයි)
+    if(window.data.jobs) {
+        window.data.jobs.filter(j => branch === "Admin" || j.br === branch).forEach(j => {
+            jobSelect.innerHTML += `<option value="${j.id}">${j.id} - ${j.addr || ''}</option>`;
+        });
+    }
+
+    // Load Stock (Branch එකට අදාළ ඒව විතරයි)
+    if(window.data.stock) {
+        window.data.stock.filter(s => branch === "Admin" || s.br === branch).forEach(s => {
+            itemSelect.innerHTML += `<option value="${s.item}">${s.item} (Avail: ${s.qty})</option>`;
+        });
+    }
+};
+
+window.processMIN = () => {
+    const jobId = document.getElementById('min-job-id').value;
+    const itemName = document.getElementById('min-item-name').value;
+    const qtyIssue = parseFloat(document.getElementById('min-qty').value) || 0;
+    const tech = document.getElementById('min-tech').value;
+    const branch = sessionStorage.getItem('sc_br');
+
+    if(!jobId || !itemName || qtyIssue <= 0) return alert("කරුණාකර සියලු විස්තර ඇතුළත් කරන්න!");
+
+    // 1. Stock එකෙන් අඩු කිරීම
+    const stockIndex = window.data.stock.findIndex(s => s.item === itemName && (branch === "Admin" || s.br === branch));
+    
+    if(stockIndex > -1) {
+        if(window.data.stock[stockIndex].qty < qtyIssue) return alert("ස්ටොක් එකේ ප්‍රමාණවත් තරම් බඩු නැත!");
+        window.data.stock[stockIndex].qty -= qtyIssue;
+    } else {
+        return alert("අයිතමය සොයාගත නොහැක!");
+    }
+
+    // 2. අදාළ Job එක සොයාගෙන ඒකට බඩු ඇඩ් කිරීම
+    const jobIndex = window.data.jobs.findIndex(j => j.id === jobId);
+    if(jobIndex > -1) {
+        if(!window.data.jobs[jobIndex].issued_items) window.data.jobs[jobIndex].issued_items = [];
+        
+        window.data.jobs[jobIndex].issued_items.push({
+            item: itemName,
+            qty: qtyIssue,
+            tech: tech,
+            date: new Date().toLocaleDateString()
+        });
+    }
+
+    // 3. MIN Record එක වෙනම සේව් කිරීම (History එක සඳහා)
+    if(!window.data.min_records) window.data.min_records = [];
+    window.data.min_records.push({ jobId, itemName, qty: qtyIssue, tech, br: branch, date: new Date().toLocaleDateString() });
+
+    window.sync();
+    alert("Stock Out සාර්ථකයි! Job එකට බඩු ඇතුළත් විය.");
+    location.reload();
+};
+	
+	
+	window.searchJobs = () => {
+    const query = document.getElementById('job-search-input').value.toLowerCase();
+    const branch = sessionStorage.getItem('sc_br');
+    const container = document.getElementById('job-results-container');
+    
+    container.innerHTML = "";
+
+    if (!window.data.jobs || window.data.jobs.length === 0) {
+        container.innerHTML = "<p style='text-align:center; grid-column: 1/-1;'>No jobs found in database.</p>";
+        return;
+    }
+
+    const filtered = window.data.jobs.filter(j => {
+        const isBranchMatch = (branch === "Admin" || j.br === branch);
+        const isSearchMatch = j.id.toLowerCase().includes(query) || (j.phone && j.phone.includes(query));
+        return isBranchMatch && isSearchMatch;
+    });
+
+    if (filtered.length === 0) {
+        container.innerHTML = "<p style='text-align:center; grid-column: 1/-1;'>ගැලපෙන Jobs කිසිවක් නැත.</p>";
+        return;
+    }
+
+    filtered.forEach(j => {
+        container.innerHTML += `
+            <div class="job-card">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <h4>ID: ${j.id}</h4>
+                    <span class="job-status" style="background:var(--accent); color:white; padding:2px 6px; border-radius:4px;">${j.br}</span>
+                </div>
+                <p><i class="fas fa-phone"></i> ${j.phone || 'N/A'}</p>
+                <p><i class="fas fa-map-marker-alt"></i> ${j.addr || 'No Address'}</p>
+                <p><i class="fas fa-calendar-alt"></i> ${j.date}</p>
+                <hr style="border:0; border-top:1px dashed #eee; margin:10px 0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:bold; color:var(--danger);">Rs. ${parseFloat(j.amt).toLocaleString()}</span>
+                    <button class="btn" style="width:auto; padding:5px 12px; font-size:11px; background:var(--primary);" onclick="viewJobDetails('${j.id}')">VIEW DETAILS</button>
+                </div>
+            </div>
+        `;
+    });
+};
+// පේජ් එක ලෝඩ් වෙද්දී ඔක්කොම Jobs පෙන්නන්න
+setTimeout(() => { if(typeof searchJobs === 'function') searchJobs(); }, 1000);
+	
+	
+	
+// JOB එක පෙන්වන කොටස
+window.viewJobDetails = (jobId) => {
+    const job = window.data.jobs.find(j => j.id === jobId);
+    if (!job) return;
+
+    const modal = document.getElementById('job-modal');
+    const content = document.getElementById('modal-content');
+    
+    document.getElementById('modal-job-id').innerText = "JOB ID: " + job.id;
+    
+    // Services List
+    let servicesHtml = job.items.map(s => `
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:8px; border-bottom:1px solid #f1f5f9; padding-bottom:5px;">
+            <span>${s.name} <br> <small style="color:#64748b;">Rs. ${s.price.toLocaleString()} x ${s.qty}</small></span>
+            <b style="color:var(--primary);">Rs. ${s.sub.toLocaleString()}</b>
+        </div>
+    `).join('');
+
+    // Issued Materials List
+    let issuedHtml = "";
+    if (job.issued_items && job.issued_items.length > 0) {
+        issuedHtml = `<div style="margin-top:20px; background:#fff7ed; padding:10px; border-radius:8px;">
+            <h4 style="margin:0 0 10px 0; color:#c2410c; font-size:14px;">ISSUED MATERIALS</h4>`;
+        issuedHtml += job.issued_items.map(i => `
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;">
+                <span>${i.item} (x${i.qty})</span>
+                <span style="color:#9a3412;">${i.tech}</span>
+            </div>
+        `).join('');
+        issuedHtml += `</div>`;
+    }
+
+    // Remark කොටස
+    let remarkHtml = "";
+    if (job.rem && job.rem.trim() !== "") {
+        remarkHtml = `
+            <div style="margin-top:10px; padding:10px; background:#fff9c4; border-left:4px solid #fbc02d; border-radius:5px; font-size:13px;">
+                <b style="color:#856404;"><i class="fas fa-sticky-note"></i> REMARK:</b><br>
+                <span style="color:#333;">${job.rem}</span>
+            </div>
+        `;
+    }
+
+    // Modal එකේ පල්ලෙහා බට්න් එක - CLOSE බට්න් එක මෙතනින් අයින් කළා
+    let actionButtons = "";
+    if (job.status !== 'Completed') {
+        actionButtons = `
+            <div style="margin-top:20px;">
+                <button onclick="window.markAsDoneFromModal('${job.id}')" style="width:100%; background:#10b981; color:white; border:none; padding:12px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:14px;">
+                    <i class="fas fa-check-circle"></i> MARK AS DONE
+                </button>
+            </div>
+        `;
+    }
+
+    content.innerHTML = `
+        <div style="background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:15px; font-size:13px;">
+            <p style="margin:4px 0;"><b>Phone:</b> ${job.phone || 'N/A'}</p>
+            <p style="margin:4px 0;"><b>Address:</b> ${job.addr || 'N/A'}</p>
+            <p style="margin:4px 0;"><b>Date:</b> ${job.date} | <b>Branch:</b> ${job.br}</p>
+            <p style="margin:4px 0;"><b>Status:</b> <span style="color:${job.status === 'Completed' ? '#10b981' : '#f59e0b'}; font-weight:bold;">${job.status || 'Pending'}</span></p>
+            ${remarkHtml}
+        </div>
+        
+        <h4 style="margin:15px 0 10px 0; border-bottom:2px solid var(--accent); padding-bottom:5px; color:var(--primary);">SERVICES & CHARGES</h4>
+        ${servicesHtml}
+        ${issuedHtml}
+        
+        <div style="margin-top:20px; text-align:right; background:var(--primary); color:white; padding:15px; border-radius:8px;">
+            <small style="opacity:0.8;">Total Service Charge:</small><br>
+            <b style="font-size:22px;">Rs. ${parseFloat(job.amt).toLocaleString()}</b>
+        </div>
+
+        ${actionButtons}
+    `;
+    
+    // Modal එක පෙන්වනවා
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex'; 
+};
+
+// ජොබ් එක DONE කරන function එක
+window.markAsDoneFromModal = (jobId) => {
+    if(!confirm("මෙම ජොබ් එක අවසන් (Completed) ලෙස සලකුණු කිරීමට ඔබට ස්ථිරද?")) return;
+
+    const jobIndex = window.data.jobs.findIndex(j => j.id === jobId);
+    if (jobIndex !== -1) {
+        window.data.jobs[jobIndex].status = 'Completed';
+        window.sync(); 
+        alert("Job Marked as Completed! ✅");
+        location.reload(); 
+    }
+};
+
+// JOB එක වහන කොටස
+window.closeJobModal = () => {
+    const modal = document.getElementById('job-modal');
+    modal.style.display = 'none';
+    modal.classList.add('hidden');
+};
+
+// SRN කොටස
+window.prepareSRN = () => {
+    const branch = sessionStorage.getItem('sc_br');
+    const jobSelect = document.getElementById('srn-job-id');
+    if(!jobSelect) return;
+    jobSelect.innerHTML = '<option value="">-- Select Job --</option>';
+
+    if(window.data.jobs) {
+        window.data.jobs.filter(j => branch === "Admin" || j.br === branch).forEach(j => {
+            jobSelect.innerHTML += `<option value="${j.id}">${j.id} - ${j.addr || ''}</option>`;
+        });
+    }
+};
+window.loadJobItemsForSRN = () => {
+    const jobId = document.getElementById('srn-job-id').value;
+    const itemSelect = document.getElementById('srn-item-name');
+    itemSelect.innerHTML = '<option value="">-- Select Item --</option>';
+
+    const job = window.data.jobs.find(j => j.id === jobId);
+    if(job && job.issued_items) {
+        job.issued_items.forEach(i => {
+            itemSelect.innerHTML += `<option value="${i.item}">${i.item} (Issued: ${i.qty})</option>`;
+        });
+    }
+};
+
+window.processSRN = () => {
+    const jobId = document.getElementById('srn-job-id').value;
+    const itemName = document.getElementById('srn-item-name').value;
+    const qtyReturn = parseFloat(document.getElementById('srn-qty').value) || 0;
+    const branch = sessionStorage.getItem('sc_br');
+
+    if(!jobId || !itemName || qtyReturn <= 0) return alert("කරුණාකර සියලු විස්තර නිවැරදිව ඇතුළත් කරන්න!");
+
+    // 1. Job එකෙන් බඩු ප්‍රමාණය අඩු කිරීම හෝ ඉවත් කිරීම
+    const jobIndex = window.data.jobs.findIndex(j => j.id === jobId);
+    const itemIndex = window.data.jobs[jobIndex].issued_items.findIndex(i => i.item === itemName);
+    
+    if(itemIndex > -1) {
+        const issuedQty = window.data.jobs[jobIndex].issued_items[itemIndex].qty;
+        if(qtyReturn > issuedQty) return alert("නිකුත් කළ ප්‍රමාණයට වඩා වැඩි ප්‍රමාණයක් Return කළ නොහැක!");
+
+        window.data.jobs[jobIndex].issued_items[itemIndex].qty -= qtyReturn;
+        
+        // ප්‍රමාණය 0 වුණොත් ලිස්ට් එකෙන් අයින් කරන්න
+        if(window.data.jobs[jobIndex].issued_items[itemIndex].qty === 0) {
+            window.data.jobs[jobIndex].issued_items.splice(itemIndex, 1);
+        }
+    }
+
+    // 2. Stock එකට ආපහු එකතු කිරීම
+    const stockIndex = window.data.stock.findIndex(s => s.item === itemName && (branch === "Admin" || s.br === branch));
+    if(stockIndex > -1) {
+        window.data.stock[stockIndex].qty += qtyReturn;
+    } else {
+        // ස්ටොක් එකේ අයිතමය නැතිනම් අලුතින් ඇඩ් කරන්න
+        window.data.stock.push({ item: itemName, qty: qtyReturn, br: branch, date: new Date().toLocaleDateString() });
+    }
+
+    window.sync();
+    alert("SRN සාර්ථකයි! බඩු ප්‍රමාණය Job එකෙන් ඉවත් වී ස්ටොක් එකට එකතු විය.");
+    location.reload();
+};
+
+window.saveExpense = () => {
+    console.log("Save Expense started..."); // බට්න් එක වැඩද බලන්න
+
+    const category = document.getElementById('exp-category').value;
+    const amountInput = document.getElementById('exp-amount');
+    const amount = parseFloat(amountInput.value) || 0;
+    const note = document.getElementById('exp-note').value;
+    const branch = sessionStorage.getItem('sc_br');
+
+    // 1. Validation (මුදල නිවැරදිද බලනවා)
+    if (amount <= 0) {
+        alert("කරුණාකර වලංගු මුදලක් ඇතුළත් කරන්න!");
+        return;
+    }
+
+    if (!branch) {
+        alert("ඔබව ලොග් වී නැත. කරුණාකර නැවත ලොග් වන්න.");
+        return;
+    }
+
+    // 2. දත්ත ව්‍යුහය (Data Object)
+    const newExp = {
+        id: "EXP" + Date.now(),
+        cat: category,
+        amt: amount,
+        note: note,
+        br: branch,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        timestamp: new Date().getTime()
+    };
+
+    // 3. window.data එක තියෙනවද බලලා සේව් කරනවා
+    if (!window.data) {
+        alert("සර්වර් එක සමඟ සම්බන්ධතාවය ඇති වෙමින් පවතී. කරුණාකර තත්පරයක් ඉන්න.");
+        return;
+    }
+    
+    if (!window.data.expenses) window.data.expenses = [];
+    
+    window.data.expenses.push(newExp);
+    console.log("Expense pushed to local data:", newExp);
+
+    // 4. Cloud එකට Sync කරනවා
+    try {
+        window.sync(); 
+        alert("වියදම සාර්ථකව සේව් කළා!");
+        
+        // Form එක ක්ලියර් කරනවා
+        amountInput.value = "";
+        document.getElementById('exp-note').value = "";
+        
+        // ලිස්ට් එක Update කරනවා
+        renderExpenseList();
+    } catch (err) {
+        console.error("Sync Error:", err);
+        alert("දත්ත සේව් කිරීමට නොහැකි විය: " + err.message);
+    }
+};
+
+
+window.addEventListener('load', () => {
+    console.log("System Initializing...");
+
+    // 1. කලින් ලොග් වෙලා හිටපු බ්‍රාන්ච් එක තියෙනවද බලනවා
+    const savedBranch = sessionStorage.getItem('sc_br');
+    
+    if (savedBranch) {
+        // ලොගින් ස්ක්‍රීන් එක හංගලා ඇප් එක පෙන්වනවා
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-content').classList.remove('hidden');
+        document.getElementById('user-branch').innerText = savedBranch;
+
+        // 2. වැදගත්ම කොටස: Firebase එකෙන් Data එනකල් තත්පර 3ක් ඉන්නවා
+        // ඊට පස්සේ Expenses සහ Salary ලිස්ට් දෙකම Load කරනවා
+        setTimeout(() => {
+            console.log("Loading Cloud Data...");
+            
+            if (typeof renderExpenseList === 'function') {
+                renderExpenseList();
+            }
+            
+            if (typeof renderSalaryList === 'function') {
+                renderSalaryList();
+            }
+            
+            if (typeof searchJobs === 'function') {
+                searchJobs();
+            }
+            
+            console.log("All Lists Updated Successfully!");
+        }, 3000); // සර්වර් එකත් එක්ක Sync වෙන්න තත්පර 3ක් දෙනවා
+    }
+});
+
+
+
+
+
+window.renderExpenseList = () => {
+    const branch = sessionStorage.getItem('sc_br');
+    const listDiv = document.getElementById('branch-exp-list');
+    
+    if (!listDiv) return;
+    listDiv.innerHTML = "";
+
+    if (!window.data || !window.data.expenses || window.data.expenses.length === 0) {
+        listDiv.innerHTML = "<p style='padding:20px; color:gray;'>No expenses recorded yet.</p>";
+        return;
+    }
+
+    // තමන්ගේ බ්‍රාන්ච් එකේ ඒවා විතරක් Filter කරමු
+    const filtered = window.data.expenses.filter(e => branch === "Admin" || e.br === branch);
+
+    filtered.reverse().forEach(e => {
+        // වැදගත්: amt හෝ amount කියන දෙකෙන් එකක් තියෙනවද බලනවා (Error එක එන්නේ මෙතනයි)
+        const displayAmount = e.amt || e.amount || 0;
+
+        listDiv.innerHTML += `
+            <div style="padding:12px; border-bottom:1px solid #edf2f7; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b style="color:var(--primary);">${e.cat || 'Expense'}</b> <br>
+                    <small style="color:#64748b;">${e.note || '-'}</small> <br>
+                    <small style="font-size:10px; color:#94a3b8;">${e.date} | ${e.br}</small>
+                </div>
+                <div style="text-align:right;">
+                    <b style="color:#e11d48;">Rs. ${Number(displayAmount).toLocaleString()}</b>
+                </div>
+            </div>
+        `;
+    });
+};
+
+// 1. Net Salary එක Auto ගණනය කිරීම
+window.calculateNetSalary = () => {
+    const basic = parseFloat(document.getElementById('sal-basic').value) || 0;
+    const ot = parseFloat(document.getElementById('sal-ot').value) || 0;
+    const inc = parseFloat(document.getElementById('sal-inc').value) || 0;
+    const adv = parseFloat(document.getElementById('sal-adv').value) || 0;
+    
+    const net = (basic + ot + inc) - adv;
+    document.getElementById('net-salary-display').innerText = "Rs. " + net.toLocaleString();
+    return net;
+};
+
+// 2. Salary එක සේව් කිරීම
+window.saveSalary = () => {
+    const name = document.getElementById('sal-name').value;
+    const branch = sessionStorage.getItem('sc_br');
+    const net = window.calculateNetSalary();
+
+    if (!name) return alert("කරුණාකර නම ඇතුළත් කරන්න!");
+
+    const newSal = {
+        id: "SAL" + Date.now(),
+        name: name,
+        basic: parseFloat(document.getElementById('sal-basic').value) || 0,
+        ot: parseFloat(document.getElementById('sal-ot').value) || 0,
+        inc: parseFloat(document.getElementById('sal-inc').value) || 0,
+        adv: parseFloat(document.getElementById('sal-adv').value) || 0,
+        net: net,
+        br: branch,
+        date: new Date().toLocaleDateString()
+    };
+
+    if (!window.data.salaries) window.data.salaries = [];
+    window.data.salaries.push(newSal);
+    
+    window.sync();
+    alert("Salary Record Saved!");
+    
+    // Clear Form
+    document.getElementById('sal-name').value = "";
+    document.getElementById('sal-basic').value = 0;
+    document.getElementById('sal-ot').value = 0;
+    document.getElementById('sal-inc').value = 0;
+    document.getElementById('sal-adv').value = 0;
+    window.calculateNetSalary();
+    renderSalaryList();
+};
+
+window.renderSalaryList = () => {
+    const branch = sessionStorage.getItem('sc_br');
+    const listDiv = document.getElementById('branch-sal-list');
+    if (!listDiv) return;
+
+    // දත්ත නැතිනම් පොඩ්ඩක් ඉන්න කියලා පෙන්වනවා
+    if (!window.data || !window.data.salaries) {
+        listDiv.innerHTML = "<p style='color:orange;'>Syncing with Cloud...</p>";
+        // තත්පර 2කින් ආයෙත් Render කරන්න උත්සාහ කරනවා
+        setTimeout(window.renderSalaryList, 2000);
+        return;
+    }
+
+    listDiv.innerHTML = "";
+    if (window.data.salaries.length === 0) {
+        listDiv.innerHTML = "<p style='color:gray; padding:10px;'>No salary records found.</p>";
+        return;
+    }
+
+    // බ්‍රාන්ච් එක අනුව Filter කිරීම
+    const filtered = window.data.salaries.filter(s => branch === "Admin" || s.br === branch);
+
+    filtered.reverse().forEach(s => {
+        listDiv.innerHTML += `
+            <div style="padding:10px; border-bottom:1px solid #eee; margin-bottom:5px; background:#fff; border-radius:5px;">
+                <div style="display:flex; justify-content:space-between;">
+                    <b>${s.name}</b>
+                    <b style="color:#10b981;">Rs. ${(s.net || 0).toLocaleString()}</b>
+                </div>
+                <div style="font-size:11px; color:#64748b; margin-top:5px;">
+                    Basic: ${s.basic} | OT: ${s.ot} | Adv: -${s.adv}
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+                    <small style="color:#94a3b8;">${s.date} (${s.br})</small>
+                    <button onclick="deleteSalary('${s.id}')" style="background:none; border:none; color:#ef4444; cursor:pointer;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+};
+
+
+
+window.generateFinanceReport = () => {
+    const fromDate = document.getElementById('fin-from-date').value;
+    const toDate = document.getElementById('fin-to-date').value;
+    const branch = sessionStorage.getItem('sc_br');
+
+    if (!fromDate || !toDate) return alert("කරුණාකර දින වකවානු තෝරන්න!");
+
+    // දින සසඳන්න ලේසි වෙන්න Date Objects හදනවා
+    const start = new Date(fromDate);
+    const end = new Date(toDate);
+    end.setHours(23, 59, 59); // දවසේ අවසානය දක්වාම ගන්න
+
+    let totalIncome = 0;
+    let totalExpense = 0;
+    let totalSalary = 0;
+
+    // 1. JOBS INCOME (ඔයාගේ Job Card එකේ තියෙන j.amt එකම මෙතනට ගන්නවා)
+    if (window.data && window.data.jobs) {
+        window.data.jobs.forEach(j => {
+            const jDate = new Date(j.date);
+            // දින වකවානු සහ බ්‍රාන්ච් එක පරීක්ෂාව
+            if (jDate >= start && jDate <= end && (branch === "Admin" || j.br === branch)) {
+                // j.amt තමයි ඔයාගේ කෝඩ් එකේ මුළු ගාණට තියෙන නම
+                const jobAmount = parseFloat(j.amt) || 0;
+                totalIncome += jobAmount;
+            }
+        });
+    }
+
+    // 2. GENERAL EXPENSES (සාමාන්‍ය වියදම්)
+    if (window.data && window.data.expenses) {
+        window.data.expenses.forEach(e => {
+            const eDate = new Date(e.date);
+            if (eDate >= start && eDate <= end && (branch === "Admin" || e.br === branch)) {
+                // e.amt හෝ e.amount කියන දෙකෙන් එකක් බලනවා
+                const expAmount = parseFloat(e.amt) || parseFloat(e.amount) || 0;
+                totalExpense += expAmount;
+            }
+        });
+    }
+
+    // 3. SALARIES (පඩි නඩි)
+    if (window.data && window.data.salaries) {
+        window.data.salaries.forEach(s => {
+            const sDate = new Date(s.date);
+            if (sDate >= start && sDate <= end && (branch === "Admin" || s.br === branch)) {
+                const salAmount = parseFloat(s.net) || 0;
+                totalSalary += salAmount;
+            }
+        });
+    }
+
+    // මුළු වියදම සහ ශුද්ධ ලාභය
+    const grandTotalExpense = totalExpense + totalSalary;
+    const netProfit = totalIncome - grandTotalExpense;
+
+    // --- UI එකට දත්ත යැවීම ---
+    document.getElementById('report-summary').classList.remove('hidden');
+    document.getElementById('total-income-disp').innerText = "Rs. " + totalIncome.toLocaleString();
+    document.getElementById('total-exp-disp').innerText = "Rs. " + grandTotalExpense.toLocaleString();
+    
+    const profitElement = document.getElementById('net-profit-disp');
+    profitElement.innerText = "Rs. " + netProfit.toLocaleString();
+    
+    // ලාභ නම් කොළ පාට, පාඩු නම් රතු පාට
+    profitElement.style.color = netProfit >= 0 ? "#10b981" : "#ef4444";
+
+    // විස්තරාත්මක වගුව (Breakdown Table)
+    document.getElementById('finance-breakdown').innerHTML = `
+        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+            <tr style="border-bottom:1px solid #eee; height:35px;">
+                <td><i class="fas fa-tools"></i> Total Job Income</td>
+                <td style="text-align:right; color:#10b981; font-weight:bold;">+ ${totalIncome.toLocaleString()}</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee; height:35px;">
+                <td><i class="fas fa-receipt"></i> Shop Expenses</td>
+                <td style="text-align:right; color:#ef4444;">- ${totalExpense.toLocaleString()}</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee; height:35px;">
+                <td><i class="fas fa-user-tie"></i> Employee Salaries</td>
+                <td style="text-align:right; color:#ef4444;">- ${totalSalary.toLocaleString()}</td>
+            </tr>
+            <tr style="height:45px; font-size:16px; font-weight:bold; background:#f8fafc;">
+                <td>NET PROFIT</td>
+                <td style="text-align:right; color:${netProfit >= 0 ? '#10b981' : '#ef4444'};">
+                    ${netProfit.toLocaleString()}
+                </td>
+            </tr>
+        </table>
+    `;
+};
+
+
+window.generateInvoice = () => {
+    const jobId = document.getElementById('inv-search-id').value.trim();
+    if (!jobId) return alert("කරුණාකර Job ID එකක් ඇතුළත් කරන්න.");
+
+    const job = window.data.jobs.find(j => j.id === jobId);
+    if (!job) return alert("මෙම ID එකට අදාළ Job එකක් හමු වුණේ නැත.");
+
+    // Header Details
+    document.getElementById('invoice-header-details').innerHTML = `
+        <div>
+            <b>Bill To:</b><br>
+            Phone: ${job.phone || 'N/A'}<br>
+            Address: ${job.addr || 'N/A'}
+        </div>
+        <div style="text-align: right;">
+            <b>Invoice No:</b> #${job.id}<br>
+            <b>Date:</b> ${job.date}<br>
+            <b>Branch:</b> ${job.br}
+        </div>
+    `;
+
+    // Body (Services)
+    let bodyHtml = "";
+    if (job.items) {
+        job.items.forEach(item => {
+            bodyHtml += `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 8px;">${item.name}</td>
+                    <td style="padding: 8px; text-align: center;">${item.qty}</td>
+                    <td style="padding: 8px; text-align: right;">${item.sub.toLocaleString()}</td>
+                </tr>
+            `;
+        });
+    }
+
+    document.getElementById('invoice-body').innerHTML = bodyHtml;
+
+    // Footer (Total Income)
+    document.getElementById('invoice-footer').innerHTML = `
+        <h3 style="margin: 0;">Grand Total: Rs. ${parseFloat(job.amt).toLocaleString()}</h3>
+        <p style="font-size: 11px; margin-top: 5px;">Thank you for choosing Smart Cool Solutions!</p>
+    `;
+};
+
+let currentType = 'jobs';
+let editingId = null;
+
+window.openAdminPanel = () => {
+    document.getElementById('admin-lock-screen').classList.remove('hidden');
+    document.getElementById('admin-content').classList.add('hidden');
+    changeTab('admin-panel');
+};
+
+window.verifyAdmin = () => {
+    if (document.getElementById('admin-pass-input').value === "admin@99") {
+        document.getElementById('admin-lock-screen').classList.add('hidden');
+        document.getElementById('admin-content').classList.remove('hidden');
+        loadAdminData('jobs');
+    } else { alert("Wrong Password!"); }
+};
+
+window.loadAdminData = (type) => {
+    currentType = type;
+    const branch = document.getElementById('admin-branch-filter').value;
+    const container = document.getElementById('admin-list-container');
+    container.innerHTML = "";
+
+    const data = window.data[type] || [];
+    const filtered = data.filter(item => branch === "All" || item.br === branch);
+
+    filtered.slice().reverse().forEach(item => {
+        const id = item.id || item.date + item.name;
+        container.innerHTML += `
+            <div class="card" style="margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <b>${item.id || item.name || item.cat || 'Record'}</b><br>
+                    <small>${item.date} | ${item.br}</small><br>
+                    <span style="color:var(--primary); font-weight:bold;">Rs. ${parseFloat(item.amt || item.net || item.amount || 0).toLocaleString()}</span>
+                </div>
+                <div style="display:flex; gap:15px;">
+                    <i class="fas fa-edit" style="color:blue; cursor:pointer;" onclick="openEditModal('${type}', '${id}')"></i>
+                    <i class="fas fa-trash" style="color:red; cursor:pointer;" onclick="adminDelete('${type}', '${id}')"></i>
+                </div>
+            </div>
+        `;
+    });
+};
+
+// 📝 EDIT MODAL LOGIC
+window.openEditModal = (type, id) => {
+    editingId = id;
+    const item = window.data[type].find(i => (i.id || i.date + i.name) === id);
+    if(!item) return;
+
+    const inputArea = document.getElementById('edit-form-inputs');
+    inputArea.innerHTML = "";
+    document.getElementById('edit-title').innerText = "Edit " + type.slice(0,-1).toUpperCase();
+
+    // Editable Fields (Amount & Extra info)
+    const fields = type === 'jobs' ? ['amt', 'phone'] : 
+                   type === 'salaries' ? ['net', 'basic', 'ot', 'adv'] :
+                   type === 'expenses' ? ['amount', 'cat'] : ['qty', 'price'];
+
+    fields.forEach(f => {
+        inputArea.innerHTML += `
+            <label style="font-size:12px; font-weight:bold; margin-top:10px; display:block;">${f.toUpperCase()}:</label>
+            <input type="text" id="edit-field-${f}" value="${item[f] || ''}" style="width:100%;">
+        `;
+    });
+
+    document.getElementById('edit-modal').classList.remove('hidden');
+};
+
+window.saveAdminEdit = () => {
+    const item = window.data[currentType].find(i => (i.id || i.date + i.name) === editingId);
+    const fields = currentType === 'jobs' ? ['amt', 'phone'] : 
+                   currentType === 'salaries' ? ['net', 'basic', 'ot', 'adv'] :
+                   currentType === 'expenses' ? ['amount', 'cat'] : ['qty', 'price'];
+
+    fields.forEach(f => {
+        const val = document.getElementById('edit-field-' + f).value;
+        item[f] = isNaN(val) ? val : parseFloat(val);
+    });
+
+    window.sync();
+    closeEditModal();
+    loadAdminData(currentType);
+    alert("Updated Successfully!");
+};
+
+window.closeEditModal = () => document.getElementById('edit-modal').classList.add('hidden');
+
+window.adminDelete = (type, id) => {
+    if(!confirm("Delete this record permanently?")) return;
+    window.data[type] = window.data[type].filter(i => (i.id || i.date + i.name) !== id);
+    window.sync();
+    loadAdminData(type);
+};
+
+
+
+window.globalSearch = () => {
+    const q = document.getElementById('global-search-input').value.toLowerCase();
+    const listDiv = document.getElementById('global-results-list');
+    const userBranch = sessionStorage.getItem('sc_br'); // ලොග් වෙලා ඉන්න බ්‍රාන්ච් එක ගන්නවා
+
+    if (q === "") {
+        listDiv.innerHTML = "";
+        return;
+    }
+
+    if (!window.data || !window.data.jobs) return;
+
+    // Filtering - මෙතනදී අපි බ්‍රාන්ච් එකත් චෙක් කරනවා
+    const filtered = window.data.jobs.filter(j => {
+        // 1. කලින් වගේම ID, Phone හෝ Type එකෙන් සර්ච් කරනවා
+        const matchesQuery = (j.id && j.id.toString().toLowerCase().includes(q)) || 
+                             (j.phone && j.phone.toString().toLowerCase().includes(q)) ||
+                             (j.type && j.type.toLowerCase().includes(q));
+
+        // 2. බ්‍රාන්ච් එක චෙක් කරනවා (Admin නම් ඔක්කොම, නැත්නම් තමන්ගේ බ්‍රාන්ච් එක විතරයි)
+        const isAccessible = (userBranch === "Admin") || (j.br === userBranch);
+
+        return matchesQuery && isAccessible;
+    });
+
+    listDiv.innerHTML = "";
+
+    if (filtered.length === 0) {
+        listDiv.innerHTML = "<p style='font-size:12px; color:gray; text-align:center; padding:10px;'>ඔබේ ශාඛාවට අදාළ දත්ත හමු නොවීය.</p>";
+        return;
+    }
+
+    // Results පෙන්වන කොටස
+    filtered.reverse().forEach(j => {
+        const card = document.createElement('div');
+        card.style = "background:white; padding:10px; border-radius:8px; margin-bottom:8px; border-left:4px solid #3b82f6; box-shadow:0 2px 4px rgba(0,0,0,0.05);";
+        
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <b style="font-size:14px;">#${j.id}</b>
+                <span style="font-size:10px; padding:2px 6px; background:#dcfce7; color:#166534; border-radius:4px; font-weight:bold;">${j.status || 'Pending'}</span>
+            </div>
+            <div style="font-size:12px; color:#64748b; margin:5px 0;">
+                <b>Type:</b> ${j.type || 'General'} | <b>Branch:</b> ${j.br}
+            </div>
+            <button onclick="window.viewJobDetails('${j.id}')" style="width:100%; background:#f1f5f9; border:1px solid #cbd5e1; padding:5px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:bold;">VIEW JOB</button>
+        `;
+        listDiv.appendChild(card);
+    });
+};
+
+
+// 1. තියෙන Items ලිස්ට් එක Select එකට දානවා
+window.refreshStockList = () => {
+    const select = document.getElementById('stk-select-item');
+    select.innerHTML = '<option value="">-- Select Existing Item to Update --</option>';
+    
+    if(window.data && window.data.stock) {
+        window.data.stock.forEach(s => {
+            select.innerHTML += `<option value="${s.item}">${s.item}</option>`;
+        });
+    }
+};
+
+// 2. Select එකෙන් Item එකක් තෝරපු ගමන් විස්තර ටික Boxes වලට දානවා
+window.loadStockDetails = () => {
+    const selectedName = document.getElementById('stk-select-item').value;
+    const item = window.data.stock.find(s => s.item === selectedName);
+    
+    if(item) {
+        document.getElementById('stk-item').value = item.item;
+        document.getElementById('stk-desc').value = item.desc || "";
+        document.getElementById('stk-qty').value = item.qty;
+        document.getElementById('stk-price').value = item.price;
+    }
+};
+
+// 3. දැනට තියෙන Stock එක Update කරන ප්‍රධාන Function එක
+window.updateStockInCloud = () => {
+    const itemName = document.getElementById('stk-item').value;
+    const desc = document.getElementById('stk-desc').value;
+    const qty = parseFloat(document.getElementById('stk-qty').value);
+    const price = parseFloat(document.getElementById('stk-price').value);
+
+    if(!itemName) return alert("කරුණාකර Update කළ යුතු Item එක තෝරන්න!");
+
+    const stockIndex = window.data.stock.findIndex(s => s.item === itemName);
+
+    if(stockIndex !== -1) {
+        // අදාළ Item එක සොයාගත්තා, දැන් ඒක Update කරනවා
+        window.data.stock[stockIndex].desc = desc;
+        window.data.stock[stockIndex].qty = qty;
+        window.data.stock[stockIndex].price = price;
+
+        window.sync();
+        alert("Stock Updated Successfully! ✅");
+        location.reload();
+    } else {
+        alert("මෙම Item නම සොයාගත නොහැක. අලුත් Item එකක් ලෙස Save කරන්න.");
+    }
+};
+
+function init() {
+    // Firebase එකෙන් දත්ත මුලින්ම ඇදලා ගන්නවා
+    db.once('value').then(snap => {
+        const val = snap.val() || {};
+        state.jobs = val.jobs || [];
+        state.salaries = val.salaries || [];
+        state.expenses = val.expenses || [];
+        
+        // දත්ත ලැබුණාට පස්සේ UI එක Update කරනවා
+        renderJobs();
+        renderSalaries();
+    });
+
+    // පස්සේ මොනවා හරි වෙනස් වුණොත් ඒකත් Update කරනවා (Real-time)
+    db.on('value', snap => {
+        const val = snap.val() || {};
+        state.jobs = val.jobs || [];
+        state.salaries = val.salaries || [];
+        state.expenses = val.expenses || [];
+        renderJobs();
+        renderSalaries();
+    });
+}
+
+
+function handleLogin() {
+    const u = document.getElementById('log-user').value.toLowerCase().trim();
+    const p = document.getElementById('log-pass').value;
+    const access = { "admin":"admin123", "anuradhapura":"apr@2026", "negombo":"neg@2026" };
+    
+    if(access[u] === p) {
+        currentUser = u;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        document.getElementById('user-tag').innerText = u.toUpperCase();
+        
+        // මෙන්න මේ පේළිය අනිවාර්යයෙන් තියෙන්න ඕනේ දත්ත ලෝඩ් වෙන්න
+        init(); 
+        
+    } else {
+        alert("Invalid Login");
+    }
+}
+
+
+
+window.backupSystem = () => {
+    console.log("Backup button clicked...");
+
+    // ඔයාගේ කෝඩ් එකේ දත්ත තියෙන variable එක මෙතනට දාන්න. 
+    // (window.data හෝ window.state හෝ state)
+    const currentData = window.data || window.state || window.state_data; 
+
+    if (!currentData || Object.keys(currentData).length === 0) {
+        console.error("No data found to backup!", currentData);
+        alert("බාගත කිරීමට දත්ත කිසිවක් සොයාගත නොහැක!");
+        return;
+    }
+
+    try {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentData, null, 4));
+        const downloadAnchor = document.createElement('a');
+        const date = new Date().toISOString().split('T')[0];
+
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `SCS_Full_Backup_${date}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        
+        console.log("Backup successful!");
+        alert("සම්පූර්ණ පද්ධති බැකප් එක සාර්ථකව බාගත විය!");
+    } catch (error) {
+        console.error("Backup failed:", error);
+        alert("Error: " + error.message);
+    }
+};
+window.restoreSystem = () => {
+    const fileInput = document.getElementById('restoreFile');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("කරුණාකර Backup (.json) ෆයිල් එකක් තෝරන්න.");
+        return;
+    }
+
+    if (!confirm("අවවාදයයි: Backup එක ඇතුළත් කළහොත් දැනට ඇති සියලුම දත්ත මැකී යනු ඇත. මෙය සිදු කරමුද?")) {
+        fileInput.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            const dbPath = 'smart_cool_main'; 
+
+            // Firebase functions dynamic විදිහට import කරගන්නවා module එක ඇතුළේ නිසා
+            const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js");
+            
+            if (!window.db) {
+                alert("Database connection error! කරුණාකර පේජ් එක refresh කරන්න.");
+                return;
+            }
+
+            const dbRef = ref(window.db, dbPath);
+            
+            set(dbRef, importedData)
+            .then(() => {
+                window.data = importedData;
+                alert("පද්ධතිය සාර්ථකව Restore කළා! දැන් පේජ් එක reload වේවි.");
+                location.reload(); 
+            })
+            .catch((error) => {
+                alert("Firebase Error: " + error.message);
+            });
+
+        } catch (err) {
+            alert("JSON Error: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+};
+
+
+
+window.restoreSystem = async () => {
+    const fileInput = document.getElementById('restoreFile');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("කරුණාකර Backup (.json) ෆයිල් එකක් තෝරන්න.");
+        return;
+    }
+
+    if (!confirm("අවවාදයයි: Backup එක ඇතුළත් කළහොත් දැනට ඇති සියලුම දත්ත මැකී යනු ඇත. මෙය සිදු කරමුද?")) {
+        fileInput.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            
+            // Firebase functions dynamic විදිහට import කරගැනීම
+            const { ref, set } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js");
+
+            if (!window.db) {
+                alert("Database connection error! කරුණාකර පේජ් එක refresh කරන්න.");
+                return;
+            }
+
+            const dbRef = ref(window.db, 'smart_cool_main');
+            
+            set(dbRef, importedData)
+            .then(() => {
+                alert("දත්ත සාර්ථකව Restore කළා!");
+                location.reload(); 
+            })
+            .catch((error) => {
+                alert("Firebase Error: " + error.message);
+            });
+
+        } catch (err) {
+            alert("JSON Error: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+};
+</script>
+<footer style="margin-top: 40px; padding: 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
+    <div style="max-width: 600px; margin: 0 auto;">
+        <h3 style="color: #1e40af; font-size: 16px; margin-bottom: 5px; font-weight: 800; letter-spacing: 1px;">
+            AC CARE SYSTEM MANAGEMENT
+        </h3>
+        <p style="color: #64748b; font-size: 13px; margin: 5px 0;">
+            Designed & Developed by <b>Anura</b>
+        </p>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px;">
+            <a href="tel:0711094820" style="text-decoration: none; background: #3b82f6; color: white; padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                <i class="fas fa-phone-alt"></i> 071 109 4820
+            </a>
+        </div>
+        <p style="color: #94a3b8; font-size: 11px; margin-top: 10px; font-style: italic;">
+            Contact for Technical Support
+        </p>
+    </div>
+</footer>
+</body>
+</html>
